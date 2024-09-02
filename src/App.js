@@ -1,6 +1,6 @@
 import './App.css';
 
-import { useState } from 'react';
+import { Children, useState } from 'react';
 
 const faqs = [
   {
@@ -26,20 +26,22 @@ export default function App() {
 }
 
 function Accordion({ data }) {
+  const [curOpen, setCurOpen] = useState(null);
   return (
     <div className="accordion">
       {data.map((el, index) => (
-        <AccordionItem title={el.title} text={el.text} num={index} key={index} />
+        <AccordionItem onOpen={setCurOpen} curOpen={curOpen} title={el.title} num={index} key={index}>
+          {el.text}
+        </AccordionItem>
       ))}
     </div>
   );
 }
 
-function AccordionItem({ title, text, num }) {
-  const [isOpen, setIsOpen] = useState(false);
-
+function AccordionItem({ title, num, curOpen, onOpen, children }) {
+  const isOpen = num === curOpen;
   function handleToggle() {
-    setIsOpen((isOpen) => !isOpen);
+    onOpen(isOpen ? null : num);
   }
 
   return (
@@ -47,7 +49,7 @@ function AccordionItem({ title, text, num }) {
       <p className="number">{num < 9 ? `0${num + 1}` : num}</p>
       <p className="title">{title}</p>
       <p className="icon">{isOpen ? '-' : '+'}</p>
-      {isOpen && <p className="content-box">{text}</p>}
+      {isOpen && <div className="content-box">{children}</div>}
     </div>
   );
 }
